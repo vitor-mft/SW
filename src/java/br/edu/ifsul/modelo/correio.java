@@ -5,56 +5,42 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- *
+ *{"cepDestino":"95985000",
+"TipodeFrete": "04510",
+"peso" : "2",
+"valorDeclarado" : "200,00"}
  * @author V_M_FT
  */
 @XmlRootElement
-public class correio implements Serializable {
+public class correio implements Serializable{
     
-    
-   // private String endereco;
-    private Double valorCompra;
-   // private String cepOrigem;
+    private String codigoServico;
     private String cepDestino;
+    private String peso;
     private Double valorFrete;
-    private Integer PrazoDeEntrega;
-    private String TipodeFrete;
-    private String peso;    
-//    private Integer formato; // 1 CAIXA, 2 ROLO PRISMA; 3 ENVELOPE
-//    private String comprimento;
-//    private String altura;
-//    private String largura;
-//    private String diametro;
- //   private String maoPropria; //serviço adicional
-    private String valorDeclarado; //???
- //   private String avisoRecebimento; // S ou N  
+    private Integer prazoEntrega;
+    private Double valorDeclarado;
 
-    
-    
     public correio() {
-        
-        
     }
 
-      public correio(Double valorCompra, String cepDestino, String dataEntrega ,String TipodeFrete, String peso, 
-              Double valorFrete, Integer PrazoDeEntrega) {
-        this.TipodeFrete = TipodeFrete;
-        this.peso = peso;
-        this.valorCompra = valorCompra;
+    public correio(String codigoServico, String cepDestino, String peso, Double valorFrete, Integer prazoEntrega,
+    Double valorDeclarado) {
+        this.codigoServico = codigoServico;
         this.cepDestino = cepDestino;
-        this.PrazoDeEntrega = PrazoDeEntrega;
+        this.peso = peso;
         this.valorFrete = valorFrete;
-      
-        
-        
+        this.prazoEntrega = prazoEntrega;
+        this.valorDeclarado = valorDeclarado;
+    }
+    
+
+    public String getCodigoServico() {
+        return codigoServico;
     }
 
-    public Double getValorCompra() {
-        return valorCompra;
-    }
-
-    public void setValorCompra(Double valorCompra) {
-        this.valorCompra = valorCompra;
+    public void setCodigoServico(String codigoServico) {
+        this.codigoServico = codigoServico;
     }
 
     public String getCepDestino() {
@@ -65,36 +51,12 @@ public class correio implements Serializable {
         this.cepDestino = cepDestino;
     }
 
-    public Integer getPrazoDeEntrega() {
-        return PrazoDeEntrega;
-    }
-
-    public void setPrazoDeEntrega(Integer PrazoDeEntrega) {
-        this.PrazoDeEntrega = PrazoDeEntrega;
-    }
-
-    public String getTipodeFrete() {
-        return TipodeFrete;
-    }
-
-    public void setTipodeFrete(String TipodeFrete) {
-        this.TipodeFrete = TipodeFrete;
-    }
-
     public String getPeso() {
         return peso;
     }
 
     public void setPeso(String peso) {
         this.peso = peso;
-    }
-
-    public String getValorDeclarado() {
-        return valorDeclarado;
-    }
-
-    public void setValorDeclarado(String valorDeclarado) {
-        this.valorDeclarado = valorDeclarado;
     }
 
     public Double getValorFrete() {
@@ -104,11 +66,22 @@ public class correio implements Serializable {
     public void setValorFrete(Double valorFrete) {
         this.valorFrete = valorFrete;
     }
+
+    public Integer getPrazoEntrega() {
+        return prazoEntrega;
+    }
+
+    public void setPrazoEntrega(Integer prazoEntrega) {
+        this.prazoEntrega = prazoEntrega;
+    }
+
+    public Double getValorDeclarado() {
+        return valorDeclarado;
+    }
+
+    public void setValorDeclarado(Double valorDeclarado) {
+        this.valorDeclarado = valorDeclarado;
+    }
     
-       
-    
-  
-    
-    
-    
+
 }

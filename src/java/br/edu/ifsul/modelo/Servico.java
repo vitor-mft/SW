@@ -29,57 +29,67 @@ public class Servico extends Application implements Serializable {
 
     public Servico() {
         gson = new Gson();
-
+        freteCorreios = new CalcPrecoPrazoWS();
     }
 
     @POST
     @Produces("application/json; charset=ISO-8859-1")
     @Consumes("application/json; charset=ISO-8859-1")
     public Response CalCorreio(correio objeto) {
-
-        freteCorreios = new CalcPrecoPrazoWS();
-        
         try {
-            System.out.println("Chegou aqui no Calcula Frere RESULTADO : ");
             if (objeto.getCepDestino() == null) {
                 return Response.status(Response.Status.NOT_ACCEPTABLE).build();
             }
 
             CResultado resultado = freteCorreios.getCalcPrecoPrazoWSSoap()
                     .calcPrecoPrazo(
+                            "", 
                             "",
-                            "",
-                            objeto.getTipodeFrete(),
+                            objeto.getCodigoServico(),
                             "99150000",
                             objeto.getCepDestino(),
                             objeto.getPeso(),
-                            1,//formato 01 caixa
-                            new BigDecimal(30),//comprimento
-                            new BigDecimal(30),//altura
-                            new BigDecimal(30), //largura
-                            new BigDecimal(0.0),//diametro
-                            "n",//Mao Propria
-                            new BigDecimal(objeto.getValorDeclarado()),//valor declarado
-                            "n");//aviso de recebimento       
+                            1,
+                            new BigDecimal(30),
+                            new BigDecimal(30),
+                            new BigDecimal(30),
+                            new BigDecimal(0.0),
+                            "s",
+                            new BigDecimal(objeto.getValorDeclarado()),
+                            "s");
 
             if (!resultado.getServicos().getCServico().get(0).getMsgErro().isEmpty()) {
                 String res = resultado.getServicos().getCServico().get(0).getMsgErro();
+
                 System.out.println("" + res);
-                if (res.equals("CEP de origem invalido.")) {
-                    return Response.status(Response.Status.BAD_REQUEST).build();
-                } else {
-                    return Response.status(Response.Status.PRECONDITION_FAILED).build();
+
+                if (res.equals("CEP de destino invalido.")) {
+                    return Response.status(Response.Status.FOUND).build();//302
+                } else if (res.equals("Peso excedido.")) {
+                    return Response.status(Response.Status.FORBIDDEN).build();//403
+                } else if (res.equals("Serviço indisponível para o trecho informado.")) {
+                    return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();//500
+                }else if (res.equals("Erro ao calcular tarifa no SGPB. ERP-031: Nao informado o peso, a quantidade ou o valor(-1).")) {
+                    return Response.status(Response.Status.HTTP_VERSION_NOT_SUPPORTED).build();//505
+                }
+                
+                else {
+                    return Response.status(Response.Status.PRECONDITION_FAILED).build();//412
                 }
 
             } else {
 
                 objeto.setValorFrete(Double.parseDouble(resultado.getServicos().getCServico().get(0).getValor().replace(",", ".")));
-                objeto.setPrazoDeEntrega(Integer.parseInt(resultado.getServicos().getCServico().get(0).getPrazoEntrega()));
+                objeto.setPrazoEntrega(Integer.parseInt(resultado.getServicos().getCServico().get(0).getPrazoEntrega()));
 
             }
-        } catch (NumberFormatException ex) {
-            System.out.println("" + ex);
+
+        } catch (NumberFormatException e) {
+            System.out.println("" + e);
         }
+
         return Response.ok(gson.toJson(objeto)).build();
     }
+
+//{"codigoServico":"04014","cepDestino":"99030040","peso":"1"}
 }
